@@ -10,6 +10,10 @@
         path = ./zig;
         description = "Zig development environment.";
       };
+      x86-asm = {
+        path = ./x86-asm;
+        description = "x86 assembly development environment.";
+      };
     };
   };
 }
