@@ -38,6 +38,7 @@
         in
         {
           default = pkgs.stdenv.mkDerivation {
+            # This metadata must be kept up to date with build.zig
             pname = "hello-zig";
             version = "0.0.0";
             src = ./.;
