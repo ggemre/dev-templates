@@ -43,7 +43,6 @@
 
             packages = [
               python.pkgs.venvShellHook
-              python.pkgs.pip
 
               # Other necessary packages
               # python.pkgs.numpy
