@@ -6,48 +6,46 @@
   outputs =
     { nixpkgs, ... }:
     let
-      supportedSystems = [
+      systems = [
         "x86_64-linux"
         "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
       ];
 
-      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems f;
+      eachSystem =
+        with nixpkgs.lib;
+        f: foldAttrs mergeAttrs { } (map (s: mapAttrs (_: v: { ${s} = v; }) (f s)) systems);
     in
-    {
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          default = pkgs.mkShell {
-            packages = [
-              pkgs.zig
-              pkgs.zls
-            ];
-          };
-        }
-      );
+    eachSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
 
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
-        {
-          default = pkgs.stdenv.mkDerivation {
-            # This metadata must be kept up to date with build.zig
-            pname = "hello-zig";
-            version = "0.0.0";
-            src = pkgs.lib.cleanSource ./.;
+        nativeBuildInputs = [ ];
+        buildInputs = [ ];
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          inherit nativeBuildInputs buildInputs;
+          packages = [
+            pkgs.zig
+            pkgs.zls
+          ];
+        };
 
-            nativeBuildInputs = [
-              pkgs.zig.hook
-            ];
-          };
-        }
-      );
-    };
+        packages.default = pkgs.stdenv.mkDerivation {
+          pname = "hello-zig";
+          version = "0.0.0";
+          src = pkgs.lib.cleanSource ./.;
+
+          nativeBuildInputs = nativeBuildInputs ++ [
+            pkgs.zig.hook
+          ];
+          inherit buildInputs;
+        };
+      }
+    );
 }

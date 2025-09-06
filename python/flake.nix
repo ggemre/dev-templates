@@ -6,52 +6,58 @@
   outputs =
     { nixpkgs, ... }:
     let
-      supportedSystems = [
+      systems = [
         "x86_64-linux"
         "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
       ];
 
-      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems f;
+      eachSystem =
+        with nixpkgs.lib;
+        f: foldAttrs mergeAttrs { } (map (s: mapAttrs (_: v: { ${s} = v; }) (f s)) systems);
 
       # The version of Python to use
       version = "313";
     in
-    {
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-          python = pkgs."python${version}";
-        in
-        {
-          default = pkgs.mkShellNoCC {
-            venvDir = ".venv";
+    eachSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+        };
 
-            postShellHook = ''
-              	local venvVersion
-              	venvVersion="$("$venvDir/bin/python" -c 'import platform; print(platform.python_version())')"
+        python = pkgs."python${version}";
 
-              	[[ "$venvVersion" == "${python.version}" ]] && return
+        nativeBuildInputs = [
+          # python.pkgs.numpy
+        ];
+        buildInputs = [ ];
 
-              	cat <<EOF
-                  Warning: Python version mismatch: [$venvVersion (venv)] != [${python.version}]
-                           Delete '$venvDir' and reload to rebuild for version ${python.version}
-                  EOF
-            '';
+      in
+      {
+        devShells.default = pkgs.mkShellNoCC {
+          inherit nativeBuildInputs buildInputs;
+          venvDir = ".venv";
 
-            packages = [
-              python.pkgs.venvShellHook
-              python.pkgs.python-lsp-server
-              python.pkgs.flake8
+          postShellHook = ''
+            	local venvVersion
+            	venvVersion="$("$venvDir/bin/python" -c 'import platform; print(platform.python_version())')"
 
+            	[[ "$venvVersion" == "${python.version}" ]] && return
 
-              # Other necessary packages
-              # python.pkgs.numpy
-            ];
-          };
-        }
-      );
-    };
+            	cat <<EOF
+                Warning: Python version mismatch: [$venvVersion (venv)] != [${python.version}]
+                         Delete '$venvDir' and reload to rebuild for version ${python.version}
+                EOF
+          '';
+
+          packages = [
+            python.pkgs.venvShellHook
+            python.pkgs.python-lsp-server
+            python.pkgs.flake8
+          ];
+        };
+      }
+    );
 }

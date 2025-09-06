@@ -7,55 +7,44 @@
   outputs =
     { nixpkgs, nix-gleam, ... }:
     let
-      supportedSystems = [
+      systems = [
         "x86_64-linux"
         "aarch64-linux"
         "x86_64-darwin"
         "aarch64-darwin"
       ];
 
-      forAllSystems = f: nixpkgs.lib.genAttrs supportedSystems f;
+      eachSystem =
+        with nixpkgs.lib;
+        f: foldAttrs mergeAttrs { } (map (s: mapAttrs (_: v: { ${s} = v; }) (f s)) systems);
     in
-    {
-      devShells = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-          # Version of Beam to use
-          beamVersion = "28";
-        in
-        {
-          default = pkgs.mkShell {
-            packages = [
-              pkgs.gleam
-              pkgs."beamMinimal${beamVersion}Packages".erlang
+    eachSystem (
+      system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            nix-gleam.overlays.default
+          ];
+        };
 
-              # If you want javascript target
-              # pkgs.nodejs_slim
-            ];
-          };
-        }
-      );
+        nativeBuildInputs = [ ];
+        buildInputs = [ ];
+      in
+      {
+        devShells.default = pkgs.mkShellNoCC {
+          inherit nativeBuildInputs buildInputs;
+          packages = [
+            pkgs.gleam
+            pkgs.erlang
+            # pkgs.nodejs_slim
+          ];
+        };
 
-      packages = forAllSystems (
-        system:
-        let
-          pkgs = import nixpkgs {
-            inherit system;
-            overlays = [
-              nix-gleam.overlays.default
-            ];
-          };
-        in
-        {
-          default = pkgs.buildGleamApplication {
-            erlangPackage = pkgs.erlang;
-            rebar3Package = pkgs.rebar3;
-            nativeBuildInputs = [];
-            localPackages = [];
-            src = pkgs.lib.cleanSource ./.;
-          };
-        }
-      );
-    };
+        packages.default = pkgs.buildGleamApplication {
+          inherit nativeBuildInputs buildInputs;
+          src = pkgs.lib.cleanSource ./.;
+        };
+      }
+    );
 }

@@ -3,32 +3,38 @@
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable?shallow=1";
 
-  outputs = { self, nixpkgs }: let
-    systems = [ "x86_64-linux" ];
-    forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
-  in {
-    devShells = forAllSystems (system:
+  outputs =
+    { self, nixpkgs }:
+    let
+      systems = [ "x86_64-linux" ];
+      eachSystem =
+        with nixpkgs.lib;
+        f: foldAttrs mergeAttrs { } (map (s: mapAttrs (_: v: { ${s} = v; }) (f s)) systems);
+    in
+    eachSystem (
+      system:
       let
-        pkgs = import nixpkgs { inherit system; };
-      in {
-        default = pkgs.mkShell {
-          packages = [ pkgs.nasm pkgs.binutils ];
+        pkgs = import nixpkgs {
+          inherit system;
         };
-      });
 
-    packages = forAllSystems (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in {
-        default = pkgs.stdenv.mkDerivation {
+        nativeBuildInputs = [
+          pkgs.nasm
+        ];
+      in
+      {
+        devShells.default = pkgs.mkShell {
+          inherit nativeBuildInputs;
+        };
+
+        packages.default = pkgs.stdenv.mkDerivation {
+          inherit nativeBuildInputs;
+
           pname = "hello-asm";
           version = "0.0.0";
 
           src = pkgs.lib.cleanSource ./.;
 
-          buildInputs = [ pkgs.nasm ];
-
-          # Two-step build: assemble, then link
           buildPhase = ''
             nasm -f elf64 main.asm -o main.o
             ld -o main main.o
@@ -39,7 +45,6 @@
             cp main $out/bin/
           '';
         };
-      });
-  };
+      }
+    );
 }
-
