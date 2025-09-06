@@ -39,7 +39,7 @@
         {
           default = pkgs.stdenv.mkDerivation {
             pname = "hello-zig";
-            version = "1.0";
+            version = "0.0.0";
             src = ./.;
 
             nativeBuildInputs = [
