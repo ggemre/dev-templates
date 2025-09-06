@@ -43,6 +43,9 @@
 
             packages = [
               python.pkgs.venvShellHook
+              python.pkgs.python-lsp-server
+              python.pkgs.flake8
+
 
               # Other necessary packages
               # python.pkgs.numpy
