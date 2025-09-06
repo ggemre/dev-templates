@@ -7,6 +7,15 @@
     systems = [ "x86_64-linux" ];
     forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f system);
   in {
+    devShells = forAllSystems (system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in {
+        default = pkgs.mkShell {
+          packages = [ pkgs.nasm pkgs.binutils ];
+        };
+      });
+
     packages = forAllSystems (system:
       let
         pkgs = import nixpkgs { inherit system; };
@@ -15,7 +24,7 @@
           pname = "hello-asm";
           version = "0.0.0";
 
-          src = ./.;
+          src = pkgs.lib.cleanSource ./.;
 
           buildInputs = [ pkgs.nasm ];
 
@@ -29,15 +38,6 @@
             mkdir -p $out/bin
             cp main $out/bin/
           '';
-        };
-      });
-
-    devShells = forAllSystems (system:
-      let
-        pkgs = import nixpkgs { inherit system; };
-      in {
-        default = pkgs.mkShell {
-          packages = [ pkgs.nasm pkgs.binutils ];
         };
       });
   };

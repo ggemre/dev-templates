@@ -53,7 +53,7 @@
             rebar3Package = pkgs.rebar3;
             nativeBuildInputs = [];
             localPackages = [];
-            src = ./.;
+            src = pkgs.lib.cleanSource ./.;
           };
         }
       );

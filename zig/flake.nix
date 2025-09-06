@@ -41,7 +41,7 @@
             # This metadata must be kept up to date with build.zig
             pname = "hello-zig";
             version = "0.0.0";
-            src = ./.;
+            src = pkgs.lib.cleanSource ./.;
 
             nativeBuildInputs = [
               pkgs.zig.hook
