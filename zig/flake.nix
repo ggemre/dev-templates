@@ -24,14 +24,15 @@
           inherit system;
         };
 
-        nativeBuildInputs = [ ];
+        nativeBuildInputs = [
+          pkgs.zig
+        ];
         buildInputs = [ ];
       in
       {
         devShells.default = pkgs.mkShell {
           inherit nativeBuildInputs buildInputs;
           packages = [
-            pkgs.zig
             pkgs.zls
           ];
         };

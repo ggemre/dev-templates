@@ -29,10 +29,10 @@
 
         python = pkgs."python${version}";
 
-        nativeBuildInputs = [
+        nativeBuildInputs = [ ];
+        buildInputs = [
           # python.pkgs.numpy
         ];
-        buildInputs = [ ];
 
       in
       {

@@ -28,21 +28,20 @@
           ];
         };
 
-        nativeBuildInputs = [ ];
+        nativeBuildInputs = [
+          pkgs.gleam
+          pkgs.erlang
+          # pkgs.nodejs_slim
+        ];
         buildInputs = [ ];
       in
       {
         devShells.default = pkgs.mkShellNoCC {
           inherit nativeBuildInputs buildInputs;
-          packages = [
-            pkgs.gleam
-            pkgs.erlang
-            # pkgs.nodejs_slim
-          ];
         };
 
         packages.default = pkgs.buildGleamApplication {
-          inherit nativeBuildInputs buildInputs;
+          inherit buildInputs;
           src = pkgs.lib.cleanSource ./.;
         };
       }

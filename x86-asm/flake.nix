@@ -7,9 +7,12 @@
     { self, nixpkgs }:
     let
       systems = [ "x86_64-linux" ];
+
       eachSystem =
         with nixpkgs.lib;
         f: foldAttrs mergeAttrs { } (map (s: mapAttrs (_: v: { ${s} = v; }) (f s)) systems);
+
+      pname = "hello-asm";
     in
     eachSystem (
       system:
@@ -28,21 +31,19 @@
         };
 
         packages.default = pkgs.stdenv.mkDerivation {
-          inherit nativeBuildInputs;
-
-          pname = "hello-asm";
+          inherit pname nativeBuildInputs;
           version = "0.0.0";
 
           src = pkgs.lib.cleanSource ./.;
 
           buildPhase = ''
             nasm -f elf64 main.asm -o main.o
-            ld -o main main.o
+            ld main.o -o ${pname}
           '';
 
           installPhase = ''
             mkdir -p $out/bin
-            cp main $out/bin/
+            cp ${pname} $out/bin/
           '';
         };
       }
