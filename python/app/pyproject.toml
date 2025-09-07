@@ -1,0 +1,8 @@
+[project]
+name = "hello-python-app"
+version = "0.0.0"
+
+[project.scripts]
+hello-python-app = "app.__main__:main"
+
+

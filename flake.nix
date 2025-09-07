@@ -7,8 +7,12 @@
         description = "Gleam development environment.";
       };
       python = {
-        path = ./python;
+        path = ./python/simple;
         description = "Python development environment.";
+      };
+      python-app = {
+        path = ./python/app;
+        description = "Python PyProject development environment.";
       };
       zig = {
         path = ./zig;
