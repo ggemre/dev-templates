@@ -38,6 +38,7 @@
         };
 
         packages.default = pkgs.stdenv.mkDerivation {
+          # Keep consistent with build.zig
           pname = "hello-zig";
           version = "0.0.0";
           src = pkgs.lib.cleanSource ./.;
