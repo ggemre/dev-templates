@@ -10,7 +10,7 @@
         path = ./python;
         description = "Python development environment.";
       };
-      python-app = {
+      python-pyproject= {
         path = ./python-pyproject;
         description = "Python PyProject development environment.";
       };
