@@ -7,11 +7,11 @@
         description = "Gleam development environment.";
       };
       python = {
-        path = ./python/simple;
+        path = ./python;
         description = "Python development environment.";
       };
       python-app = {
-        path = ./python/app;
+        path = ./python-pyproject;
         description = "Python PyProject development environment.";
       };
       zig = {
@@ -21,6 +21,10 @@
       x86-asm = {
         path = ./x86-asm;
         description = "x86 assembly development environment.";
+      };
+      x86-asm-libc = {
+        path = ./x86-asm-libc;
+        description = "x86 assembly with external c libraries environment.";
       };
     };
   };
