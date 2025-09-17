@@ -34,6 +34,7 @@
           inherit nativeBuildInputs buildInputs;
           packages = [
             pkgs.zls
+            # pkgs.zon2nix
           ];
         };
 
@@ -42,6 +43,11 @@
           pname = "hello-zig";
           version = "0.0.0";
           src = pkgs.lib.cleanSource ./.;
+
+          # For zig dependencies. (Make sure to generate deps.nix with zon2nix).
+          # postPatch = ''
+          #   ln -s ${pkgs.callPackage ./deps.nix { }} $ZIG_GLOBAL_CACHE_DIR/p
+          # '';
 
           nativeBuildInputs = nativeBuildInputs ++ [
             pkgs.zig.hook
