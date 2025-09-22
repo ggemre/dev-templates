@@ -6,6 +6,10 @@
         path = ./gleam;
         description = "Gleam development environment.";
       };
+      go = {
+        path = ./go;
+        description = "Go development environment.";
+      };
       odin = {
         path = ./odin;
         description = "Odin development environment.";
