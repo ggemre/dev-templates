@@ -6,6 +6,10 @@
         path = ./gleam;
         description = "Gleam development environment.";
       };
+      odin = {
+        path = ./odin;
+        description = "Odin development environment.";
+      };
       python = {
         path = ./python;
         description = "Python development environment.";
