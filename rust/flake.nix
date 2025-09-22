@@ -35,6 +35,7 @@
 
         packages.default = craneLib.buildPackage {
           src = pkgs.lib.cleanSource ./.;
+          inherit buildInputs;
         };
       }
     );
