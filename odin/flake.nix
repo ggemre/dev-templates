@@ -34,6 +34,9 @@
       {
         devShells.default = pkgs.mkShell {
           inherit nativeBuildInputs buildInputs;
+          packages = [
+            pkgs.ols
+          ];
         };
 
         packages.default = pkgs.stdenv.mkDerivation {
