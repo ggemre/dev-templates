@@ -2,6 +2,10 @@
   description = "Templates for numerous development flakes.";
   outputs = _: {
     templates = {
+      c = {
+        path = ./c;
+        description = "C development environment.";
+      };
       gleam = {
         path = ./gleam;
         description = "Gleam development environment.";
