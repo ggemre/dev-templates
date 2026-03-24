@@ -1,13 +1,10 @@
 {
   description = "Hello, Rust.";
 
-  inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable?shallow=1";
-    crane.url = "github:ipetkov/crane";
-  };
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
-    { nixpkgs, crane, ... }:
+    { nixpkgs, ... }:
     let
       systems = [
         "x86_64-linux"
@@ -27,15 +24,34 @@
           inherit system;
         };
 
-        buildInputs = [ ];
-        craneLib = crane.mkLib pkgs;
+        cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
+        name = cargoToml.package.name;
+        version = cargoToml.package.version;
       in
       {
-        devShells.default = craneLib.devShell {};
+        devShells.default = pkgs.mkShell {
+          nativeBuildInputs = [
+            pkgs.cargo
+          ];
 
-        packages.default = craneLib.buildPackage {
+          shellHook = ''
+            export CARGO_HOME="$PWD/.cargo"
+
+            if [ ! -f "Cargo.lock" ]; then
+              echo "Generating lockfile"
+              cargo generate-lockfile
+            fi
+          '';
+        };
+
+        packages.default = pkgs.rustPlatform.buildRustPackage {
+          inherit name version;
+
           src = pkgs.lib.cleanSource ./.;
-          inherit buildInputs;
+          cargoLock.lockFile = ./Cargo.lock;
+
+          nativeBuildInputs = [];
+          buildInputs = [];
         };
       }
     );
