@@ -1,7 +1,7 @@
 {
   description = "Hello, x86_64 Assembly!";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable?shallow=1";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
     { self, nixpkgs }:

@@ -1,8 +1,13 @@
 {
   description = "Hello, Gleam.";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable?shallow=1";
-  inputs.nix-gleam.url = "github:arnarg/nix-gleam?shallow=1";
+  inputs = {
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-gleam = {
+      url = "github:arnarg/nix-gleam";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+  };
 
   outputs =
     { nixpkgs, nix-gleam, ... }:

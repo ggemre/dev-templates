@@ -1,7 +1,7 @@
 {
   description = "Hello, Go.";
 
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable?shallow=1";
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
   outputs =
     { nixpkgs, ... }:
