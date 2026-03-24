@@ -31,7 +31,7 @@
         devShells.default = pkgs.mkShell {
           inherit nativeBuildInputs buildInputs;
           packages = [
-            pkgs.libclang
+            pkgs.clang-tools
           ];
         };
 
