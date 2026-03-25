@@ -25,7 +25,7 @@
         };
 
         cargoToml = (builtins.fromTOML (builtins.readFile ./Cargo.toml));
-        name = cargoToml.package.name;
+        pname = cargoToml.package.name;
         version = cargoToml.package.version;
       in
       {
@@ -45,7 +45,7 @@
         };
 
         packages.default = pkgs.rustPlatform.buildRustPackage {
-          inherit name version;
+          inherit pname version;
 
           src = pkgs.lib.cleanSource ./.;
           cargoLock.lockFile = ./Cargo.lock;
